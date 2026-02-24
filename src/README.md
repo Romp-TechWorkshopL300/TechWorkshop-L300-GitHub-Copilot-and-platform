@@ -1,6 +1,6 @@
 # Zava Storefront - ASP.NET Core MVC
 
-A simple e-commerce storefront application built with .NET 8 ASP.NET MVC.
+A simple e-commerce storefront application built with .NET 10 ASP.NET MVC.
 
 ## Features
 
@@ -12,7 +12,7 @@ A simple e-commerce storefront application built with .NET 8 ASP.NET MVC.
 
 ## Technology Stack
 
-- .NET 8
+- .NET 10
 - ASP.NET Core MVC
 - Bootstrap 5
 - Bootstrap Icons
