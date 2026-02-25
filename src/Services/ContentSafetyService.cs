@@ -69,7 +69,7 @@ public class ContentSafetyService
 
             return new ContentSafetyResult { IsSafe = true };
         }
-        catch (RequestFailedException ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Content safety category check failed");
             return new ContentSafetyResult { IsSafe = false, Reason = "Safety check unavailable" };

@@ -30,10 +30,18 @@ public class AIChatService
             new UserChatMessage(userMessage)
         };
 
-        var completion = await _chatClient.CompleteChatAsync(messages);
-        var reply = completion.Value.Content[0].Text;
+        try
+        {
+            var completion = await _chatClient.CompleteChatAsync(messages);
+            var reply = completion.Value.Content[0].Text;
 
-        _logger.LogInformation("Received chat response");
-        return reply;
+            _logger.LogInformation("Received chat response");
+            return reply;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Azure OpenAI request failed");
+            throw;
+        }
     }
 }

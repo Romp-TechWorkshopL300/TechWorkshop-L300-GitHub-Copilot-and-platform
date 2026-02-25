@@ -27,21 +27,32 @@ public class ChatController : Controller
         if (string.IsNullOrWhiteSpace(request?.Message))
             return BadRequest(new ChatResponse { Reply = "Please enter a message." });
 
-        // Content Safety gate
-        var safetyResult = await _contentSafety.EvaluateAsync(request.Message);
-        if (!safetyResult.IsSafe)
+        try
         {
-            _logger.LogWarning("Message blocked by Content Safety: {Reason}", safetyResult.Reason);
-            return Ok(new ChatResponse
+            // Content Safety gate
+            var safetyResult = await _contentSafety.EvaluateAsync(request.Message);
+            if (!safetyResult.IsSafe)
             {
-                Reply = "Sorry, I'm unable to process that request. Please rephrase your message and try again.",
-                Blocked = true
+                _logger.LogWarning("Message blocked by Content Safety: {Reason}", safetyResult.Reason);
+                return Ok(new ChatResponse
+                {
+                    Reply = "Sorry, I'm unable to process that request. Please rephrase your message and try again.",
+                    Blocked = true
+                });
+            }
+
+            // Safe — forward to model
+            var reply = await _chatService.GetResponseAsync(request.Message);
+            return Ok(new ChatResponse { Reply = reply });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Chat request failed");
+            return StatusCode(500, new ChatResponse
+            {
+                Reply = "An error occurred processing your request. Please try again later."
             });
         }
-
-        // Safe — forward to model
-        var reply = await _chatService.GetResponseAsync(request.Message);
-        return Ok(new ChatResponse { Reply = reply });
     }
 }
 
