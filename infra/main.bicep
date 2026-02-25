@@ -97,6 +97,15 @@ module foundryRole 'modules/foundry-roleassignment.bicep' = {
   }
 }
 
+module foundryDiagnostics 'modules/foundry-diagnostics.bicep' = {
+  name: 'foundry-diagnostics-deployment'
+  scope: rg
+  params: {
+    accountName: foundry.outputs.accountName
+    logAnalyticsWorkspaceId: appInsights.outputs.logAnalyticsWorkspaceId
+  }
+}
+
 output AZURE_RESOURCE_GROUP string = rg.name
 output AZURE_CONTAINER_REGISTRY_NAME string = acr.outputs.acrName
 output AZURE_CONTAINER_REGISTRY_LOGIN_SERVER string = acr.outputs.acrLoginServer
