@@ -69,6 +69,7 @@ public class ContentSafetyService
 
             return new ContentSafetyResult { IsSafe = true };
         }
+        catch (OperationCanceledException) { throw; }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Content safety category check failed");
@@ -93,17 +94,18 @@ public class ContentSafetyService
                 documents = Array.Empty<string>()
             });
 
+            using var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(
                 $"{_endpoint.TrimEnd('/')}/contentsafety/text:shieldPrompt?api-version=2024-09-01",
-                new StringContent(requestBody, Encoding.UTF8, "application/json"));
+                content);
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("Prompt shield API returned {StatusCode}", response.StatusCode);
-                return new ContentSafetyResult { IsSafe = true };
+                return new ContentSafetyResult { IsSafe = false, Reason = "Jailbreak check unavailable" };
             }
 
-            var json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+            using var json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
             var attackDetected = json.RootElement
                 .GetProperty("userPromptAnalysis")
                 .GetProperty("attackDetected")
@@ -121,10 +123,11 @@ public class ContentSafetyService
 
             return new ContentSafetyResult { IsSafe = true };
         }
+        catch (OperationCanceledException) { throw; }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Prompt shield check failed");
-            return new ContentSafetyResult { IsSafe = true };
+            return new ContentSafetyResult { IsSafe = false, Reason = "Jailbreak check unavailable" };
         }
     }
 }

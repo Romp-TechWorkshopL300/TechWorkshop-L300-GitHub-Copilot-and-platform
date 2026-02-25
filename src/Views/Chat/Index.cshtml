@@ -25,7 +25,11 @@
         const div = document.createElement('div');
         div.className = `mb-2 ${isUser ? 'text-end' : ''}`;
         const cls = isBlocked ? 'bg-warning text-dark' : isUser ? 'bg-primary text-white' : 'bg-white border';
-        div.innerHTML = `<span class="d-inline-block p-2 rounded ${cls}" style="max-width:80%">${text}</span>`;
+        const span = document.createElement('span');
+        span.className = `d-inline-block p-2 rounded ${cls}`;
+        span.style.maxWidth = '80%';
+        span.textContent = text;
+        div.appendChild(span);
         messages.appendChild(div);
         messages.scrollTop = messages.scrollHeight;
     }

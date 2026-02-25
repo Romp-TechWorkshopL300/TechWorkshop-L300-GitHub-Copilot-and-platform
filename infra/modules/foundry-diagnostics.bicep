@@ -8,7 +8,7 @@ resource cognitiveAccount 'Microsoft.CognitiveServices/accounts@2024-04-01-previ
   name: accountName
 }
 
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01' = {
   name: 'foundry-diagnostics'
   scope: cognitiveAccount
   properties: {

@@ -45,6 +45,7 @@ public class ChatController : Controller
             var reply = await _chatService.GetResponseAsync(request.Message);
             return Ok(new ChatResponse { Reply = reply });
         }
+        catch (OperationCanceledException) { throw; }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Chat request failed");

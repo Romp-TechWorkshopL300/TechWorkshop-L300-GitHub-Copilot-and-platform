@@ -65,6 +65,7 @@ module webApp 'modules/webapp.bicep' = {
     appServicePlanId: appServicePlan.outputs.appServicePlanId
     appInsightsConnectionString: appInsights.outputs.connectionString
     acrLoginServer: acr.outputs.acrLoginServer
+    aiEndpoint: foundry.outputs.endpoint
   }
 }
 
