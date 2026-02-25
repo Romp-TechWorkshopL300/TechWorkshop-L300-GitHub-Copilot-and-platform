@@ -45,6 +45,10 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
         }
+        {
+          name: 'WEBSITES_PORT'
+          value: '8080'
+        }
       ]
     }
     httpsOnly: true
