@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<div class="container mt-3">
+    <h4><i class="bi bi-chat-dots"></i> Shopping Assistant</h4>
+    <div id="chat-messages" class="border rounded p-3 mb-3" style="height: 400px; overflow-y: auto; background: #f8f9fa;">
+        <div class="text-muted text-center mt-5">Ask me anything about our products!</div>
+    </div>
+    <form id="chat-form" class="d-flex gap-2">
+        <input type="text" id="chat-input" class="form-control" placeholder="Type your message..." autocomplete="off" />
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-input');
+    const messages = document.getElementById('chat-messages');
+    let firstMessage = true;
+
+    function addMessage(text, isUser, isBlocked) {
+        if (firstMessage) { messages.innerHTML = ''; firstMessage = false; }
+        const div = document.createElement('div');
+        div.className = `mb-2 ${isUser ? 'text-end' : ''}`;
+        const cls = isBlocked ? 'bg-warning text-dark' : isUser ? 'bg-primary text-white' : 'bg-white border';
+        div.innerHTML = `<span class="d-inline-block p-2 rounded ${cls}" style="max-width:80%">${text}</span>`;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        addMessage(text, true, false);
+        input.value = '';
+
+        try {
+            const res = await fetch('/Chat/Send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            addMessage(data.reply, false, data.blocked);
+        } catch {
+            addMessage('Something went wrong. Please try again.', false, true);
+        }
+    });
+</script>
+}
