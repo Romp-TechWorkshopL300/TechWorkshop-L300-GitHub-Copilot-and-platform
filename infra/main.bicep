@@ -88,6 +88,15 @@ module foundry 'modules/foundry.bicep' = {
   }
 }
 
+module foundryRole 'modules/foundry-roleassignment.bicep' = {
+  name: 'foundry-role-deployment'
+  scope: rg
+  params: {
+    principalId: webApp.outputs.principalId
+    accountName: foundry.outputs.accountName
+  }
+}
+
 output AZURE_RESOURCE_GROUP string = rg.name
 output AZURE_CONTAINER_REGISTRY_NAME string = acr.outputs.acrName
 output AZURE_CONTAINER_REGISTRY_LOGIN_SERVER string = acr.outputs.acrLoginServer
