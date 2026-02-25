@@ -15,6 +15,7 @@ permissions:
 env:
   APP_NAME: ${{ vars.AZURE_APP_SERVICE_NAME }}
   ACR_NAME: ${{ vars.AZURE_CONTAINER_REGISTRY_NAME }}
+  RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
   IMAGE_NAME: zavastorefront
 
 jobs:
@@ -47,6 +48,6 @@ jobs:
           ACR_LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --query loginServer -o tsv)
           az webapp config container set \
             --name ${{ env.APP_NAME }} \
-            --resource-group $(az webapp show --name ${{ env.APP_NAME }} --query resourceGroup -o tsv) \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
             --container-image-name ${ACR_LOGIN_SERVER}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --container-registry-url https://${ACR_LOGIN_SERVER}
