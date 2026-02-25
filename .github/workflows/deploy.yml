@@ -33,19 +33,21 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Get ACR login server
+        run: echo "ACR_LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --query loginServer -o tsv)" >> $GITHUB_ENV
+
       - name: Log in to ACR
         run: az acr login --name ${{ env.ACR_NAME }}
 
       - name: Build and push Docker image
         run: |
-          ACR_LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --query loginServer -o tsv)
           docker build -t ${ACR_LOGIN_SERVER}/${{ env.IMAGE_NAME }}:${{ github.sha }} -t ${ACR_LOGIN_SERVER}/${{ env.IMAGE_NAME }}:latest ./src
           docker push ${ACR_LOGIN_SERVER}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${ACR_LOGIN_SERVER}/${{ env.IMAGE_NAME }}:latest
 
       - name: Deploy container to Azure App Service
+        if: github.event_name != 'pull_request'
         run: |
-          ACR_LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --query loginServer -o tsv)
           az webapp config container set \
             --name ${{ env.APP_NAME }} \
             --resource-group ${{ env.RESOURCE_GROUP }} \
