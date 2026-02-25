@@ -19,6 +19,9 @@ param appInsightsConnectionString string
 @description('ACR login server (e.g., myregistry.azurecr.io)')
 param acrLoginServer string
 
+@description('Azure AI Foundry endpoint URL')
+param aiEndpoint string = ''
+
 var appName = 'app-${baseName}-${environmentName}'
 
 resource webApp 'Microsoft.Web/sites@2023-12-01' = {
@@ -48,6 +51,10 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'WEBSITES_PORT'
           value: '8080'
+        }
+        {
+          name: 'AI__Endpoint'
+          value: aiEndpoint
         }
       ]
     }

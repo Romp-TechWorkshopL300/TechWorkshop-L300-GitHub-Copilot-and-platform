@@ -65,6 +65,7 @@ module webApp 'modules/webapp.bicep' = {
     appServicePlanId: appServicePlan.outputs.appServicePlanId
     appInsightsConnectionString: appInsights.outputs.connectionString
     acrLoginServer: acr.outputs.acrLoginServer
+    aiEndpoint: foundry.outputs.endpoint
   }
 }
 
@@ -94,6 +95,15 @@ module foundryRole 'modules/foundry-roleassignment.bicep' = {
   params: {
     principalId: webApp.outputs.principalId
     accountName: foundry.outputs.accountName
+  }
+}
+
+module foundryDiagnostics 'modules/foundry-diagnostics.bicep' = {
+  name: 'foundry-diagnostics-deployment'
+  scope: rg
+  params: {
+    accountName: foundry.outputs.accountName
+    logAnalyticsWorkspaceId: appInsights.outputs.logAnalyticsWorkspaceId
   }
 }
 

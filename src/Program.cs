@@ -18,6 +18,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ProductService>();
 builder.Services.AddScoped<CartService>();
+builder.Services.AddSingleton<ContentSafetyService>();
+builder.Services.AddSingleton<AIChatService>();
 
 var app = builder.Build();
 
