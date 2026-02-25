@@ -16,6 +16,9 @@ param appServicePlanId string
 @description('Application Insights connection string')
 param appInsightsConnectionString string
 
+@description('ACR login server (e.g., myregistry.azurecr.io)')
+param acrLoginServer string
+
 var appName = 'app-${baseName}-${environmentName}'
 
 resource webApp 'Microsoft.Web/sites@2023-12-01' = {
@@ -24,18 +27,23 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
   tags: union(tags, {
     'azd-service-name': 'web'
   })
-  kind: 'app,linux'
+  kind: 'app,linux,container'
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
     serverFarmId: appServicePlanId
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|10.0'
+      linuxFxVersion: 'DOCKER|${acrLoginServer}/zavastorefront:latest'
+      acrUseManagedIdentityCreds: true
       appSettings: [
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsightsConnectionString
+        }
+        {
+          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
+          value: 'false'
         }
       ]
     }

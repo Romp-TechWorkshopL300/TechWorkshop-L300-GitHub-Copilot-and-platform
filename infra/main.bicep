@@ -64,6 +64,7 @@ module webApp 'modules/webapp.bicep' = {
     tags: tags
     appServicePlanId: appServicePlan.outputs.appServicePlanId
     appInsightsConnectionString: appInsights.outputs.connectionString
+    acrLoginServer: acr.outputs.acrLoginServer
   }
 }
 
