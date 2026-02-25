@@ -7,3 +7,6 @@ services:
     project: ./src
     host: appservice
     language: dotnet
+    docker:
+      path: ./Dockerfile
+      context: .

@@ -64,6 +64,7 @@ module webApp 'modules/webapp.bicep' = {
     tags: tags
     appServicePlanId: appServicePlan.outputs.appServicePlanId
     appInsightsConnectionString: appInsights.outputs.connectionString
+    acrLoginServer: acr.outputs.acrLoginServer
   }
 }
 
@@ -84,6 +85,15 @@ module foundry 'modules/foundry.bicep' = {
     baseName: baseName
     environmentName: environmentName
     tags: tags
+  }
+}
+
+module foundryRole 'modules/foundry-roleassignment.bicep' = {
+  name: 'foundry-role-deployment'
+  scope: rg
+  params: {
+    principalId: webApp.outputs.principalId
+    accountName: foundry.outputs.accountName
   }
 }
 
